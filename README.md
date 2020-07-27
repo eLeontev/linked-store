@@ -81,7 +81,7 @@ userDetailsStore.getState().then(() => {
 
 #### Description:
 
-all hooks could be looked as primitive setState with customisation of returned data pair based on the hook's specific (only value/ ony setter / or both)
+all hooks could be looked as primitive `useState` hook with customisation of returned data pair based on the hook's specific (only value/ ony setter / or both)
 
 #### Details:
 
