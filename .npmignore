@@ -1,0 +1,11 @@
+# all ignored except published package, readme and licence
+node_modules
+src
+
+.gitignore
+
+.prettierignore
+.prettierrc.json
+
+rollup.config.js
+tsconfig.json
