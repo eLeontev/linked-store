@@ -3,12 +3,12 @@
     "version": "0.0.2",
     "description": "tiny state-management library inspired by recoil",
     "scripts": {
-        "compile": "tsc -b",
-        "validate": "eslint src/**/*.ts",
+        "validate": "tsc -b && eslint src/**/*.ts",
         "setTypes": "node ./scripts/copy-types.js",
         "build": "rollup -c",
         "publish": "npm publish --access public",
-        "publish:package": "npm run setTypes & npm run build & npm run publish"
+        "publish:package": "npm run setTypes & npm run build & npm run publish",
+        "test": "echo 'No Tests Found' && exit 0"
     },
     "repository": {
         "type": "git",
