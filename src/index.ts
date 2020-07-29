@@ -4,6 +4,6 @@ export {
     useLinkedStoreValue,
     useResetLinkedStore,
     useSetLinkedStore,
-    useAsyncLinkedValue,
     useAsyncLinkedStore,
+    useAsyncLinkedStoreValue,
 } from './hooks';
