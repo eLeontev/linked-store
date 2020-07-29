@@ -1,0 +1,14 @@
+
+language: node_js
+node_js:
+  - 12
+cache: false
+install:
+  - npm install
+  - npm install -g typescript
+jobs:
+  include:
+    - stage: validate
+      script: npm run validate
+    - stage: test:ci
+      script: npm run test
