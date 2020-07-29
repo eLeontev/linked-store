@@ -1,4 +1,4 @@
-import { asyncStatuses, IDerivedStore } from './models';
+import { asyncStatuses, IDerivedStore, GetStateCallback } from '../models';
 
 export const getResolvedResult = <T>(store: IDerivedStore<T>): T => store.getResult();
 export const throwResult = <T>(store: IDerivedStore<T>): T => {
@@ -13,5 +13,5 @@ export const resultHandlers: ResultHandlers = {
     [asyncStatuses.error]: throwResult,
 };
 
-export const getAsyncResult = <T>(store: IDerivedStore<T>, status: asyncStatuses): T =>
-    resultHandlers[status]<T>(store);
+export const getAsyncResult = <T>(store: IDerivedStore<T>): GetStateCallback<T> => () =>
+    resultHandlers[store.getStatus()](store);
