@@ -13,6 +13,12 @@ export type UpdateState<T> = (state: T) => T;
 
 export type SetState<T> = (state: T | UpdateState<T> | void) => void;
 
+export type GetStateCallback<T> = () => T;
+export type LinkedStoreState<T> = {
+    state: T;
+    getState: GetStateCallback<T>;
+};
+
 export interface IBaseStore<T> {
     getId(): symbol;
     setTrigger(trigger: Trigger): void;
