@@ -54,13 +54,14 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     constructor(private getter: Getter<T>) {
         super(Symbol('derived-store'));
 
-        this.state = this.getter(this.get);
-        this.defaultState = this.state;
-        this.result = this.state;
+        const state = this.getter(this.get);
+        this.setAsyncFlag(state instanceof Promise);
 
-        this.setAsyncFlag(this.state instanceof Promise);
+        const adaptedState = this.getAdaptedState(state);
+        this.defaultState = adaptedState;
+        this.state = adaptedState;
+        this.result = adaptedState;
 
-        this.adaptStateForHooks();
         this.setDerivedStore(this);
     }
 
@@ -91,24 +92,31 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
 
     private updateState(updatedState: T): void {
         if (updatedState !== this.state) {
-            this.state = updatedState;
-            this.result = this.state;
+            this.setAdaptedState(this.getAdaptedState(updatedState));
 
-            this.adaptStateForHooks();
             this.triggerDependencies();
         }
     }
 
-    private adaptStateForHooks(): void {
+    private setAdaptedState(adaptedState: T): void {
+        this.state = adaptedState;
+        this.result = adaptedState;
+    }
+
+    private getAdaptedState(updatedState: T): T {
         this.status = this.isStateAsync ? asyncStatuses.pending : asyncStatuses.ready;
 
         if (this.isStateAsync) {
-            this.integrateWithHooks((this.state as unknown) as Promise<T>);
+            return (this.integrateAsyncState(
+                (updatedState as unknown) as Promise<T>
+            ) as unknown) as T;
         }
+
+        return updatedState;
     }
 
-    private integrateWithHooks(promise: Promise<T>) {
-        promise
+    private integrateAsyncState(promise: Promise<T>): Promise<void> {
+        return promise
             .then(this.setAsyncResult(asyncStatuses.ready))
             .catch(this.setAsyncResult(asyncStatuses.error));
     }
