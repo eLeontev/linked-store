@@ -184,7 +184,7 @@ const userIdStore = simpleStore(null);
 const userDetailsStore = derivedStore(async (get) => await fetchUserDetails(get(userIdStore)));
 
 const UserDetails = () => {
-    const { name } = useAsyncLinkedValue(userDetailsStore);
+    const { name } = useAsyncLinkedStoreValue(userDetailsStore);
     const resetToAllUsers = useResetLinkedStore(userIdStore);
 
     return (
