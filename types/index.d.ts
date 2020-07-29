@@ -46,5 +46,5 @@ export function useSetLinkedStore<T>(store: IStore<T>): SetState<T>;
 export function useResetLinkedStore<T>(store: IStore<T>): () => void;
 export function useLinkedStore<T>(store: IStore<T>): [LinkedStoreState<T>, SetState<T>];
 
-export function useAsyncLinkedValue<T>(store: IDerivedStore<Promise<T>>): Promise<T>;
+export function useAsyncLinkedStoreValue<T>(store: IDerivedStore<Promise<T>>): T;
 export function useAsyncLinkedStore<T>(store: IDerivedStore<T>): [T, SetState<T>];

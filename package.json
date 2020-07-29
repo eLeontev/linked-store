@@ -1,6 +1,6 @@
 {
     "name": "linked-store",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "tiny state-management library inspired by recoil",
     "scripts": {
         "validate": "tsc -b && eslint src/**/*.ts",

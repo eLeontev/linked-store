@@ -15,7 +15,7 @@ export const useLinkedStoreValue = <T>(store: IStore<T>): LinkedStoreState<T> =>
     };
 };
 
-export const useAsyncLinkedValue = <T>(store: IDerivedStore<T>): T => {
+export const useAsyncLinkedStoreValue = <T>(store: IDerivedStore<T>): T => {
     useRegisterTrigger(store);
 
     return getAsyncResult(store)();
@@ -30,6 +30,6 @@ export const useLinkedStore = <T>(store: IStore<T>): [LinkedStoreState<T>, SetSt
 ];
 
 export const useAsyncLinkedStore = <T>(store: IDerivedStore<T>): [T, SetState<T>] => [
-    useAsyncLinkedValue(store),
+    useAsyncLinkedStoreValue(store),
     useSetLinkedStore(store),
 ];
