@@ -1,4 +1,4 @@
-# linked-store
+# linked-store ![Status](https://travis-ci.org/eLeontev/linked-store.svg?branch=master)
 
 ## Description
 
