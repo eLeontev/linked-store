@@ -36,6 +36,7 @@ export interface IDerivedStore<T> extends ISimpleStore<T> {
 export type IStore<T> = ISimpleStore<T> | IDerivedStore<T>;
 
 export interface IDerivedStores {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setDerivedStore(store: IDerivedStore<any>): void;
     triggerDerivedStores(ids: Set<symbol>): void;
 }

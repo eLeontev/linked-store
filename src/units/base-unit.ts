@@ -6,11 +6,11 @@ export class BaseStore<T> implements IBaseStore<T> {
     private triggers: Set<Trigger> = new Set();
     private dependencies: Set<symbol> = new Set();
     private readonly derivedStores: IDerivedStores = derivedStores;
-    protected isStateAsync: boolean = false;
+    protected isStateAsync = false;
 
     constructor(private readonly id: symbol) {}
 
-    setDerivedStore(derivedStore: IDerivedStore<T>) {
+    setDerivedStore(derivedStore: IDerivedStore<T>): void {
         this.derivedStores.setDerivedStore(derivedStore);
     }
 
@@ -45,7 +45,7 @@ export class BaseStore<T> implements IBaseStore<T> {
     protected triggerDependencies(): void {
         this.triggerDerivedStates();
         this.fireTriggers();
-    };
+    }
 
     private triggerDerivedStates(): void {
         this.derivedStores.triggerDerivedStores(this.dependencies);
