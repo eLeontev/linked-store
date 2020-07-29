@@ -15,8 +15,8 @@ export type SetState<T> = (state: T | UpdateState<T> | void) => void;
 
 export interface IBaseStore<T> {
     getId(): symbol;
-    setTriggerHook(trigger: Trigger): void;
-    removeTriggerHook(trigger: Trigger): void;
+    setTrigger(trigger: Trigger): void;
+    removeTrigger(trigger: Trigger): void;
     setDependency(dependencyId: symbol): void;
     setDerivedStore(store: IDerivedStore<T>): void;
     isAsync(): boolean;

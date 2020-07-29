@@ -3,7 +3,7 @@ import { derivedStores } from '../stores';
 import { IBaseStore, IDerivedStore, IDerivedStores, Trigger } from '../models';
 
 export class BaseStore<T> implements IBaseStore<T> {
-    private hookTriggers: Set<Trigger> = new Set();
+    private triggers: Set<Trigger> = new Set();
     private dependencies: Set<symbol> = new Set();
     private readonly derivedStores: IDerivedStores = derivedStores;
     protected isStateAsync: boolean = false;
@@ -14,14 +14,14 @@ export class BaseStore<T> implements IBaseStore<T> {
         this.derivedStores.setDerivedStore(derivedStore);
     }
 
-    setTriggerHook(trigger: Trigger): void {
-        if (!this.hookTriggers.has(trigger)) {
-            this.hookTriggers.add(trigger);
+    setTrigger(trigger: Trigger): void {
+        if (!this.triggers.has(trigger)) {
+            this.triggers.add(trigger);
         }
     }
 
-    removeTriggerHook(trigger: Trigger): void {
-        this.hookTriggers.delete(trigger);
+    removeTrigger(trigger: Trigger): void {
+        this.triggers.delete(trigger);
     }
 
     getId(): symbol {
@@ -42,16 +42,16 @@ export class BaseStore<T> implements IBaseStore<T> {
         this.isStateAsync = isStateAsync;
     }
 
-    protected triggerDerivedStates(): void {
+    protected triggerDependencies(): void {
+        this.triggerDerivedStates();
+        this.fireTriggers();
+    };
+
+    private triggerDerivedStates(): void {
         this.derivedStores.triggerDerivedStores(this.dependencies);
     }
 
-    protected triggerHooks(): void {
-        this.hookTriggers.forEach((trigger) => trigger());
+    private fireTriggers(): void {
+        this.triggers.forEach((trigger) => trigger());
     }
-
-    protected triggerDependencies = (): void => {
-        this.triggerDerivedStates();
-        this.triggerHooks();
-    };
 }

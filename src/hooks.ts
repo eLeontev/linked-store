@@ -9,9 +9,9 @@ export const useLinkedStateValue = <T>(store: IStore<T>): T => {
 
     useEffect(() => {
         const trigger = () => setState({});
-        store.setTriggerHook(trigger);
+        store.setTrigger(trigger);
 
-        return (): void => store.removeTriggerHook(trigger);
+        return (): void => store.removeTrigger(trigger);
     }, [store, setState]);
 
     let state: T;
