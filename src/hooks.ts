@@ -1,38 +1,35 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { useEffect, useState } = require('react');
+import { useRegisterTrigger } from './utils/use-register-trigger.hook';
+import { getAsyncResult } from './utils/async-hook.helper';
 
-import { getAsyncResult } from './async-hook.helper';
+import { IDerivedStore, IStore, SetState, LinkedStoreState } from './models';
 
-import { IDerivedStore, IStore, SetState } from './models';
+export const useLinkedStoreValue = <T>(store: IStore<T>): LinkedStoreState<T> => {
+    useRegisterTrigger(store);
 
-export const useLinkedStateValue = <T>(store: IStore<T>): T => {
-    const [, setState] = useState({});
+    const state = store.getState();
+    const getState = store.isAsync() ? getAsyncResult(store as IDerivedStore<T>) : () => state;
 
-    useEffect(() => {
-        const trigger = () => setState({});
-        store.setTrigger(trigger);
-
-        return (): void => store.removeTrigger(trigger);
-    }, [store, setState]);
-
-    let state: T;
-
-    if (store.isAsync()) {
-        const derivedStore = store as IDerivedStore<T>;
-        state = getAsyncResult(derivedStore, derivedStore.getStatus());
-    } else {
-        state = store.getState();
-    }
-
-    return state;
+    return {
+        state,
+        getState,
+    };
 };
 
-export const useSetLinkedState = <T>(state: IStore<T>): SetState<T> => state.setState;
-export const useResetLinkedState = <T>(state: IStore<T>): (() => void) => state.resetState;
+export const useAsyncLinkedValue = <T>(store: IDerivedStore<T>): T => {
+    useRegisterTrigger(store);
 
-export const useLinkedState = <T>(state: IStore<T>): [T, (state: T) => void] => {
-    const value = useLinkedStateValue(state);
-    const setter = useSetLinkedState(state);
-
-    return [value, setter];
+    return getAsyncResult(store)();
 };
+
+export const useSetLinkedStore = <T>(store: IStore<T>): SetState<T> => store.setState;
+export const useResetLinkedStore = <T>(store: IStore<T>): (() => void) => store.resetState;
+
+export const useLinkedStore = <T>(store: IStore<T>): [LinkedStoreState<T>, SetState<T>] => [
+    useLinkedStoreValue(store),
+    useSetLinkedStore(store),
+];
+
+export const useAsyncLinkedStore = <T>(store: IDerivedStore<T>): [T, SetState<T>] => [
+    useAsyncLinkedValue(store),
+    useSetLinkedStore(store),
+];
