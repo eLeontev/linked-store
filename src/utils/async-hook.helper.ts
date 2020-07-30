@@ -1,17 +1,17 @@
 import { asyncStatuses, IDerivedStore, GetStateCallback } from '../models';
 
-export const getResolvedResult = <T>(store: IDerivedStore<T>): T => store.getResult();
+export const getResolvedResource = <T>(store: IDerivedStore<T>): T => store.getResource();
 export const throwResult = <T>(store: IDerivedStore<T>): T => {
-    throw store.getResult();
+    throw store.getResource();
 };
-export type ResultHandlers = {
+export type ResourceHandlers = {
     [status in asyncStatuses]: <T>(store: IDerivedStore<T>) => T;
 };
-export const resultHandlers: ResultHandlers = {
-    [asyncStatuses.ready]: getResolvedResult,
+export const resourceHandlers: ResourceHandlers = {
+    [asyncStatuses.ready]: getResolvedResource,
     [asyncStatuses.pending]: throwResult,
     [asyncStatuses.error]: throwResult,
 };
 
-export const getAsyncResult = <T>(store: IDerivedStore<T>): GetStateCallback<T> => () =>
-    resultHandlers[store.getStatus()](store);
+export const getAsyncResource = <T>(store: IDerivedStore<T>): GetStateCallback<T> => () =>
+    resourceHandlers[store.getStatus()](store);

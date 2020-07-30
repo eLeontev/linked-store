@@ -2,6 +2,7 @@ import { BaseStore } from './base-unit';
 
 import {
     asyncStatuses,
+    DerivedState,
     GetState,
     Getter,
     IDerivedStore,
@@ -45,11 +46,11 @@ class SimpleStore<T> extends BaseStore<T> implements ISimpleStore<T> {
 }
 
 class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
-    private readonly defaultState: T;
-    private state: T;
+    private readonly defaultState: DerivedState<T>;
+    private state: DerivedState<T>;
 
     private status: asyncStatuses = asyncStatuses.pending;
-    private result: T;
+    private resource: DerivedState<T>;
 
     constructor(private getter: Getter<T>) {
         super(Symbol('derived-store'));
@@ -60,12 +61,12 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
         const adaptedState = this.getAdaptedState(state);
         this.defaultState = adaptedState;
         this.state = adaptedState;
-        this.result = adaptedState;
+        this.resource = adaptedState;
 
         this.setDerivedStore(this);
     }
 
-    getState(): T {
+    getState(): DerivedState<T> {
         return this.state;
     }
 
@@ -81,16 +82,16 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
         return this.status;
     }
 
-    getResult(): T {
-        return this.result;
+    getResource(): T extends Promise<T> ? T : T {
+        return this.resource as T extends Promise<T> ? T : T;
     }
 
-    private get: GetState = <T>(store: IStore<T>): T => {
+    private get: GetState = <T>(store: IStore<T>): DerivedState<T> => {
         store.setDependency(this.getId());
         return store.getState();
     };
 
-    private updateState(updatedState: T): void {
+    private updateState(updatedState: DerivedState<T>): void {
         if (updatedState !== this.state) {
             this.setAdaptedState(this.getAdaptedState(updatedState));
 
@@ -98,12 +99,12 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
         }
     }
 
-    private setAdaptedState(adaptedState: T): void {
+    private setAdaptedState(adaptedState: DerivedState<T>): void {
         this.state = adaptedState;
-        this.result = adaptedState;
+        this.resource = adaptedState;
     }
 
-    private getAdaptedState(updatedState: T): T {
+    private getAdaptedState(updatedState: DerivedState<T>): DerivedState<T> {
         this.status = this.isStateAsync ? asyncStatuses.pending : asyncStatuses.ready;
 
         if (this.isStateAsync) {
@@ -122,7 +123,7 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     }
 
     private setAsyncResult = (status: asyncStatuses) => (result: T) => {
-        this.result = result;
+        this.resource = result;
         this.status = status;
     };
 }

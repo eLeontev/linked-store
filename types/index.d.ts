@@ -9,10 +9,7 @@ type GetState = <T>(store: IStore<T>) => T;
 type UpdateState<T> = (state: T) => T;
 
 type GetStateCallback<T> = () => T;
-type LinkedStoreState<T> = {
-    state: T;
-    getState: GetStateCallback<T>;
-};
+type LinkedStoreState<T> = [T, GetStateCallback<T>];
 
 export type SetState<T> = (state: T | UpdateState<T> | void) => void;
 
@@ -44,7 +41,7 @@ export function derivedStore<T>(getter: (get: GetState) => T): IDerivedStore<T>;
 export function useLinkedStoreValue<T>(store: IStore<T>): LinkedStoreState<T>;
 export function useSetLinkedStore<T>(store: IStore<T>): SetState<T>;
 export function useResetLinkedStore<T>(store: IStore<T>): () => void;
-export function useLinkedStore<T>(store: IStore<T>): [LinkedStoreState<T>, SetState<T>];
+export function useLinkedStore<T>(store: IStore<T>): [T, SetState<T>, GetStateCallback<T>];
 
 export function useAsyncLinkedStoreValue<T>(store: IDerivedStore<Promise<T>>): T;
 export function useAsyncLinkedStore<T>(store: IDerivedStore<T>): [T, SetState<T>];
