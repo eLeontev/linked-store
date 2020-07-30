@@ -4,44 +4,48 @@ export enum asyncStatuses {
     pending = 'pending',
 }
 
-type Trigger = () => void;
-type GetState = <T>(store: IStore<T>) => T;
-type UpdateState<T> = (state: T) => T;
+export type Trigger = () => void;
 
-type GetStateCallback<T> = () => T;
-type LinkedStoreState<T> = [T, GetStateCallback<T>];
+export type GetState = <T, R = T>(store: IStore<T, R>) => T;
+export type Getter<T> = (get: GetState) => T;
+
+export type UpdateState<T> = (state: T) => T;
 
 export type SetState<T> = (state: T | UpdateState<T> | void) => void;
 
-interface IBaseStore<T> {
+export type GetStateCallback<T> = () => T;
+
+export interface IBaseStore<T, R = T> {
     getId(): symbol;
-    setTriggerHook(trigger: Trigger): void;
-    removeTriggerHook(trigger: Trigger): void;
+    setTrigger(trigger: Trigger): void;
+    removeTrigger(trigger: Trigger): void;
     setDependency(dependencyId: symbol): void;
-    setDerivedStore(store: IDerivedStore<T>): void;
+    setDerivedStore(store: IDerivedStore<T, R>): void;
     isAsync(): boolean;
 }
 
-interface ISimpleStore<T> extends IBaseStore<T> {
+export interface ISimpleStore<T, R = T> extends IBaseStore<T, R> {
     getState(): T;
     setState: SetState<T>;
     resetState(): void;
 }
 
-interface IDerivedStore<T> extends ISimpleStore<T> {
+export interface IDerivedStore<T, R> extends ISimpleStore<T, R> {
     getStatus(): asyncStatuses;
-    getResult(): T;
+    getResource(): R;
 }
 
-type IStore<T> = ISimpleStore<T> | IDerivedStore<T>;
+export type IStore<T, R = T> = ISimpleStore<T> | IDerivedStore<T, R>;
 
-export function simpleStore<T>(state: T): IStore<T>;
-export function derivedStore<T>(getter: (get: GetState) => T): IDerivedStore<T>;
+export function simpleStore<T>(state: T): IStore<T, T>;
+export function derivedStore<T, R = T>(get: Getter<T>): IDerivedStore<T, R>;
 
-export function useLinkedStoreValue<T>(store: IStore<T>): LinkedStoreState<T>;
-export function useSetLinkedStore<T>(store: IStore<T>): SetState<T>;
-export function useResetLinkedStore<T>(store: IStore<T>): () => void;
-export function useLinkedStore<T>(store: IStore<T>): [T, SetState<T>, GetStateCallback<T>];
+export function useLinkedStoreValue<T, R = T>(store: IStore<T, R>): [T, GetStateCallback<R>];
+export function useSetLinkedStore<T, R = T>(store: IStore<T, R>): SetState<T>;
+export function useResetLinkedStore<T, R = T>(store: IStore<T, R>): () => void;
+export function useLinkedStore<T, R = T>(
+    store: IStore<T, R>
+): [T, SetState<T>, GetStateCallback<R>];
 
-export function useAsyncLinkedStoreValue<T>(store: IDerivedStore<Promise<T>>): T;
-export function useAsyncLinkedStore<T>(store: IDerivedStore<T>): [T, SetState<T>];
+export function useAsyncLinkedStoreValue<T, R = T>(store: IDerivedStore<T, R>): R;
+export function useAsyncLinkedStore<T, R = T>(store: IDerivedStore<T>): [R, SetState<T>];
