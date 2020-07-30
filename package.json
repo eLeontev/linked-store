@@ -1,13 +1,14 @@
 {
     "name": "linked-store",
-    "version": "0.0.4",
+    "version": "0.1.0",
     "description": "tiny state-management library inspired by recoil",
     "scripts": {
+        "format": "prettier src/**/*.ts --write",
         "validate": "tsc -b && eslint src/**/*.ts",
         "setTypes": "node ./scripts/copy-types.js",
         "build": "rollup -c",
         "publish": "npm publish --access public",
-        "publish:package": "npm run setTypes & npm run build & npm run publish",
+        "publish:package": "npm run format && npm run setTypes && npm run build && npm run publish",
         "test": "echo 'No Tests Found' && exit 0"
     },
     "repository": {
