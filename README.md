@@ -298,3 +298,64 @@ const App = () => {
     );
 };
 ```
+
+## Usage with VanillaJS
+
+### Description:
+
+The store could be integrated or used with any framework you prefer, below is the demonstration of usage with pure javascript
+
+##### Usage:
+
+```javascript
+import { derivedStore } from 'linked-store';
+
+const asyncRandomStore = derivedStore(
+    () => new Promise((res) => setTimeout(() => res(Math.random()), 1000))
+);
+
+class RandomRenderer {
+    constructor(rootId, asyncSore) {
+        this.rootElement = document.getElementById(rootId);
+        this.asyncSore = asyncSore;
+
+        this.updateInnerHTML = this.updateInnerHTML.bind(this);
+        this.render = this.render.bind(this);
+
+        this.registerTrigger();
+    }
+
+    render() {
+        this.performCleanupAndCallRenderrer('loading');
+        this.asyncSore.getState().then(this.updateInnerHTML);
+    }
+
+    updateInnerHTML(innerHTML) {
+        this.rootElement.innerHTML = '';
+        this.rootElement.innerHTML = innerHTML;
+    }
+
+    registerTrigger() {
+        this.asyncSore.setTrigger(this.render);
+    }
+
+    destroy() {
+        this.asyncSore.removeTrigger(this.render);
+    }
+}
+
+const randomRenderer = new RandomRenderer('root', asyncRandomStore);
+randomRenderer.render();
+
+let iterator = 0;
+let timerId = setInterval(() => {
+    iterator += 1;
+
+    asyncRandomStore.setState();
+
+    if (iterator === 3) {
+        randomRenderer.destroy();
+        clearInterval(timerId);
+    }
+}, 2000);
+```
