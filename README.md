@@ -85,62 +85,67 @@ all hooks could be looked as primitive `useState` hook with customisation of ret
 
 #### Details:
 
--   useLinkedStateValue: `<T>(store: IStore<T>): T`
+-   useLinkedStoreValue: `<T>(store: IStore<T>): LinkedStoreState<T>`
 
 ##### Usage:
 
 Returns state and triggers Component re-render each time state it's changed.
 
 ```javascript
-import { useLinkedStateValue } from 'linked-store';
+import { useLinkedStoreValue } from 'linked-store';
 
 const ReactComponent = () => {
-    const isDirty = useLinkedStateValue(dirtyState);
+    const { state: isDirty} = useLinkedStoreValue(dirtyState);
     return isDirty ? null : <Content />;
+};
+
+const ReactComponent = () => {
+    const { getState } = useLinkedStoreValue(dirtyState);
+    return getState() ? null : <Content />;
 };
 ```
 
--   useSetLinkedState: `<T>(state: IStore<T>): SetState<T>`
+-   useSetLinkedStore: `<T>(store: IStore<T>): SetState<T>`
 
 ##### Usage:
 
 Returns state setter and never triggers component re-render.
 
 ```javascript
-import { useSetLinkedState } from 'linked-store';
+import { useSetLinkedStore } from 'linked-store';
 
 const ReactComponent = () => {
-    const setDirty = useSetLinkedState(dirtyState);
+    const setDirty = useSetLinkedStore(dirtyState);
     return <button onClick={() => setDirty(isDirty) => !isDirty)}>toggle dirty status</button>;
 }
 ```
 
--   useResetLinkedState: `<T>(state: IStore<T>): () => void`;
+-   useResetLinkedStore: `<T>(store: IStore<T>): () => void`;
 
 ##### Usage:
 
 Returns state reset method and never triggers component re-render.
 
 ```javascript
-import { useResetLinkedState } from 'linked-store';
+import { useResetLinkedStore } from 'linked-store';
 
 const ReactComponent = () => {
-    const resetState = useResetLinkedState(dirtyState);
+    const resetState = useResetLinkedStore(dirtyState);
     return <button onClick={resetState}>Reset state</button>;
 };
 ```
 
--   useLinkedState: `<T>(state: IStore<T>): [T, (state: T) => void]`
+-   useLinkedStore: `<T>(state: IStore<T>): [LinkedStoreState<T>, (state: T) => void]`
 
 ##### Usage:
 
 Returns pair of store values: state and its setter and triggers Component re-render each time state it's changed.
 
 ```javascript
-import { useLinkedState } from 'linked-store';
+import { useLinkedStore } from 'linked-store';
 
 const ReactComponent = () => {
-    const [isDirty, setState] = useLinkedState(dirtyState);
+    const [{ store: isDirty }, setState] = useLinkedStore(dirtyState);
     return (
         <>
             <button onClick={() => setState(!isDirty)}>toggle dirty sate</button>
@@ -163,21 +168,24 @@ In case if derived state is `Promise` the usage of the hooks will be the same. A
 import {
     simpleStore,
     derivedStore,
-    useLinkedStateValue,
-    useResetLinkedState,
-    useSetLinkedState,
+    useLinkedStore,
+    useLinkedStoreValue,
+    useSetLinkedStore,
+    useResetLinkedStore,
+    useAsyncLinkedStoreValue,
 } from 'linked-store';
 
 const getUserDetails = (userId) => ({ name: `${userId === 123 ? 'first' : 'second'} user name` });
 const fetchUserDetails = (userId) =>
     new Promise((res) => setTimeout(() => res(getUserDetails(userId)), 1000));
 
-const userIdState = simpleStore(null);
-const userDetailsStore = derivedStore(async (get) => await fetchUserDetails(get(userIdState)));
+const dirtyStore = simpleStore(false)
+const userIdStore = simpleStore(null);
+const userDetailsStore = derivedStore(async (get) => await fetchUserDetails(get(userIdStore)));
 
 const UserDetails = () => {
-    const { name } = useLinkedStateValue(userDetailsStore);
-    const resetToAllUsers = useResetLinkedState(userIdState);
+    const { name } = useAsyncLinkedStoreValue(userDetailsStore);
+    const resetToAllUsers = useResetLinkedStore(userIdStore);
 
     return (
         <>
@@ -188,7 +196,7 @@ const UserDetails = () => {
 };
 
 const AllUsers = () => {
-    const setUser = useSetLinkedState(userIdState);
+    const setUser = useSetLinkedStore(userIdStore);
     return (
         <ul>
             <li onClick={() => setUser(123)}>first user</li>
@@ -198,8 +206,8 @@ const AllUsers = () => {
 };
 
 const ReactComponent = () => {
-    const userId = useLinkedStateValue(userIdState);
-    const hasSelectedUsers = Boolean(userId);
+    const {getState} = useLinkedStoreValue(userIdStore);
+    const hasSelectedUsers = getState();
 
     return (
         <Suspense fallback={<span>loading</span>}>
