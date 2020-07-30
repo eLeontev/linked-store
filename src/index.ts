@@ -1,4 +1,5 @@
 export { simpleStore, derivedStore } from './units/units';
+export { getAsyncResource } from './utils/async-hook.helper';
 export {
     useLinkedStore,
     useLinkedStoreValue,

@@ -40,6 +40,8 @@ export type IStore<T, R = T> = ISimpleStore<T> | IDerivedStore<T, R>;
 export function simpleStore<T>(state: T): IStore<T, T>;
 export function derivedStore<T, R = T>(get: Getter<T>): IDerivedStore<T, R>;
 
+export function getAsyncResource<T, R>(store: IDerivedStore<T, R>): GetStateCallback<R>;
+
 export function useLinkedStoreValue<T, R = T>(store: IStore<T, R>): [T, GetStateCallback<R>];
 export function useSetLinkedStore<T, R = T>(store: IStore<T, R>): SetState<T>;
 export function useResetLinkedStore<T, R = T>(store: IStore<T, R>): () => void;
