@@ -3,7 +3,7 @@ const { useEffect, useState } = require('react');
 
 import { IStore } from '../models';
 
-export const useRegisterTrigger = <T, R = T>(store: IStore<T, R>): void => {
+export const useRegisterTrigger = <T>(store: IStore<T>): void => {
     const [, setState] = useState({});
 
     useEffect(() => {

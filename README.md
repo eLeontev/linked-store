@@ -33,7 +33,7 @@ dirtyStore.setState((state) => !state);
 expect(dirtyStore.getState()).toBeTruthy();
 ```
 
--   derivedStore: `<T, R = T>(getter: (get: GetState) => T): IDerivedStore<T, R>`
+-   derivedStore: `<T>(getter: (get: GetState) => T): IDerivedStore<T>`
 
 ##### Usage:
 
@@ -74,7 +74,7 @@ userDetailsStore.getState().then((userDetailsAsResource) => {
 
 #### Utils
 
--   getAsyncResource: `<T, R>(store: IDerivedStore<T, R>): GetStateCallback<R>`
+-   getAsyncResource: `<T>(store: IDerivedStore<T>): GetStateCallback<Resource<T>>`
 
 ##### Description:
 
@@ -124,10 +124,10 @@ all hooks could be looked as primitive `useState` hook with customisation of ret
 
 | hook                | types                                                                    | raise re-render | description                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------ | --------------- | ----------------------------------------------------------------------------------------------------------------- |
-| useLinkedStoreValue | `<T, R = T>(store: IStore<T, R>): [T, GetStateCallback<R>]`              | `true`          | Returns state and triggers Component re-render each time state it's changed.                                      |
-| useSetLinkedStore   | `<T, R = T>(store: IStore<T, R>): SetState<T>`                           | `false`         | Returns state setter and never triggers component re-render.                                                      |
-| useResetLinkedStore | `<T, R = T>(store: IStore<T, R>): () => void`                            | `false`         | Returns state reset method and never triggers component re-render.                                                |
-| useLinkedStore      | `<T, R = T>(store: IStore<T, R>): [T, SetState<T>, GetStateCallback<R>]` | `true`          | Returns pair of store values: state and its setter and triggers Component re-render each time state it's changed. |
+| useLinkedStoreValue | `<T>(store: IStore<T>): [State<T>, GetStateHookCallback<T>]`              | `true`          | Returns state and triggers Component re-render each time state it's changed.                                      |
+| useSetLinkedStore   | `<T>(store: IStore<T>): SetState<T>`                                      | `false`         | Returns state setter and never triggers component re-render.                                                      |
+| useResetLinkedStore | `<T>(store: IStore<T>): () => void`                                       | `false`         | Returns state reset method and never triggers component re-render.                                                |
+| useLinkedStore      | `<T>(store: IStore<T>): [State<T>, SetState<T>, GetStateHookCallback<T>]` | `true`          | Returns pair of store values: state and its setter and triggers Component re-render each time state it's changed. |
 
 ##### Usage:
 
@@ -226,6 +226,12 @@ const AsyncStoreComponent = () => {
     ) : (
         <span>loading...</span>
     );
+};
+
+// or 
+const AsyncStoreComponent = () => {
+    const { error, isLoading, data } = useAsyncWithLoaderLinkedStore(asyncRandomStore);
+    return isLoading ? <span>loading...</span> : <Content content={data} />;
 };
 ```
 

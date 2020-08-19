@@ -2,7 +2,7 @@ import { derivedStores } from '../stores';
 
 import { IBaseStore, IDerivedStore, IDerivedStores, Trigger } from '../models';
 
-export class BaseStore<T, R = T> implements IBaseStore<T, R> {
+export class BaseStore<T> implements IBaseStore<T> {
     private triggers: Set<Trigger> = new Set();
     private dependencies: Set<symbol> = new Set();
     private readonly derivedStores: IDerivedStores = derivedStores;
@@ -10,7 +10,7 @@ export class BaseStore<T, R = T> implements IBaseStore<T, R> {
 
     constructor(private readonly id: symbol) {}
 
-    setDerivedStore(derivedStore: IDerivedStore<T, R>): void {
+    setDerivedStore(derivedStore: IDerivedStore<T>): void {
         this.derivedStores.setDerivedStore(derivedStore);
     }
 

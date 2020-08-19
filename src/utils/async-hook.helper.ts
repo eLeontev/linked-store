@@ -1,11 +1,12 @@
-import { asyncStatuses, IDerivedStore, GetStateCallback } from '../models';
+import { asyncStatuses, IDerivedStore, Resource, ResourceHandler } from '../models';
+import { GetStateCallback } from '../../types';
 
-export const getResolvedResource = <T, R>(store: IDerivedStore<T, R>): R => store.getResource();
-export const throwResult = <T, R>(store: IDerivedStore<T, R>): R => {
+export const getResolvedResource = <T>(store: IDerivedStore<T>): Resource<T> => store.getResource();
+export const throwResult = <T>(store: IDerivedStore<T>): Resource<T> => {
     throw store.getResource();
 };
 export type ResourceHandlers = {
-    [status in asyncStatuses]: <T, R>(store: IDerivedStore<T, R>) => R;
+    [status in asyncStatuses]: ResourceHandler;
 };
 export const resourceHandlers: ResourceHandlers = {
     [asyncStatuses.ready]: getResolvedResource,
@@ -13,5 +14,5 @@ export const resourceHandlers: ResourceHandlers = {
     [asyncStatuses.error]: throwResult,
 };
 
-export const getAsyncResource = <T, R>(store: IDerivedStore<T, R>): GetStateCallback<R> => () =>
+export const getAsyncResource = <T>(store: IDerivedStore<T>): GetStateCallback<Resource<T>> => () =>
     resourceHandlers[store.getStatus()](store);

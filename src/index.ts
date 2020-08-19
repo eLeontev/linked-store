@@ -7,4 +7,5 @@ export {
     useSetLinkedStore,
     useAsyncLinkedStore,
     useAsyncLinkedStoreValue,
+    useAsyncWithLoaderLinkedStore,
 } from './hooks';

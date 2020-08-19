@@ -2,10 +2,10 @@ import { IDerivedStore, IDerivedStores } from './models';
 
 export class DerivedStores implements IDerivedStores {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private derivedStores = new Map<symbol, IDerivedStore<any, any>>();
+    private derivedStores = new Map<symbol, IDerivedStore<any>>();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public setDerivedStore(store: IDerivedStore<any, any>): void {
+    public setDerivedStore(store: IDerivedStore<any>): void {
         this.derivedStores.set(store.getId(), store);
     }
 
