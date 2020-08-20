@@ -49,6 +49,7 @@ class SimpleStore<T> extends BaseStore<T> implements ISimpleStore<T> {
 class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     private readonly defaultState: State<T>;
     private state: State<T>;
+    private actualState: State<T> | null = null;
 
     private status: asyncStatuses = asyncStatuses.pending;
     private resource: Resource<T> = null as Resource<T>;
@@ -114,17 +115,21 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     }
 
     private integrateAsyncState(state: State<T>): State<T> {
+        this.actualState = state;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (state as any)
-            .then(this.performCBAndPassNext(this.setAsyncResource(asyncStatuses.ready)))
-            .catch(this.performCBAndPassNext(this.setAsyncResource(asyncStatuses.error)))
-            .then(this.performCBAndPassNext(this.triggerDependencies.bind(this))) as State<T>;
+            .then(this.performCBAndNext(this.setAsyncResource(asyncStatuses.ready), state))
+            .catch(this.performCBAndNext(this.setAsyncResource(asyncStatuses.error), state))
+            .then(this.performCBAndNext(this.triggerDependencies.bind(this), state)) as State<T>;
     }
 
-    private performCBAndPassNext = (cb: (resource: Resource<T>) => void) => (
+    private performCBAndNext = (cb: (resource: Resource<T>) => void, state: State<T>) => (
         resource: Resource<T>
     ): Resource<T> => {
-        cb(resource);
+        if (this.actualState === state) {
+            cb(resource);
+        }
+
         return resource;
     };
 
