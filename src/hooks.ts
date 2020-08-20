@@ -51,10 +51,12 @@ export const useAsyncWithLoaderLinkedStore = <T, E = string>(
 
     const isError = status === asyncStatuses.error;
     const isLoading = status === asyncStatuses.pending;
+    const resource = store.getResource();
 
+    // TODO: split resource to resource and error
     return {
         isLoading,
-        error: isError ? ((store.getResource() as unknown) as E) : null,
-        data: store.getResource(),
+        error: isError ? ((resource as unknown) as E) : null,
+        data: (isError ? null : resource) as Resource<T>,
     };
 };
