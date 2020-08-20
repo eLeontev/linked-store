@@ -1,4 +1,4 @@
-export const enum asyncStatuses {
+export enum asyncStatuses {
     ready = 'ready',
     error = 'error',
     pending = 'pending',
