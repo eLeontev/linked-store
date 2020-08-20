@@ -49,3 +49,9 @@ export interface IDerivedStores {
 }
 
 export type GetStateHookCallback<T> = GetStateCallback<Resource<T>>;
+
+export type AsyncWithLoaderResult<T, E> = {
+    isLoading: boolean;
+    data: Resource<T>;
+    error: E | null;
+};

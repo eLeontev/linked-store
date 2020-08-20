@@ -3,6 +3,7 @@ import { getAsyncResource } from './utils/async-hook.helper';
 
 import {
     asyncStatuses,
+    AsyncWithLoaderResult,
     GetStateHookCallback,
     IDerivedStore,
     IStore,
@@ -41,12 +42,6 @@ export const useAsyncLinkedStore = <T>(store: IDerivedStore<T>): [Resource<T>, S
     useAsyncLinkedStoreValue(store),
     useSetLinkedStore(store),
 ];
-
-export type AsyncWithLoaderResult<T, E> = {
-    isLoading: boolean;
-    data: Resource<T>;
-    error: E | null;
-};
 
 export const useAsyncWithLoaderLinkedStore = <T, E = string>(
     store: IDerivedStore<T>

@@ -52,3 +52,13 @@ export function useLinkedStore<T>(store: IStore<T>): [T, SetState<T>, GetStateHo
 
 export function useAsyncLinkedStoreValue<T>(store: IDerivedStore<T>): Resource<T>;
 export function useAsyncLinkedStore<T>(store: IDerivedStore<T>): [Resource<T>, SetState<T>];
+
+export type AsyncWithLoaderResult<T, E> = {
+    isLoading: boolean;
+    data: Resource<T>;
+    error: E | null;
+};
+
+export function useAsyncWithLoaderLinkedStore<T, E = string>(
+    store: IDerivedStore<T>
+): AsyncWithLoaderResult<T, E>;
