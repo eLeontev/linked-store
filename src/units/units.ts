@@ -94,8 +94,9 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     private updateState(updatedState: State<T>): void {
         if (updatedState !== this.state) {
             this.setAdaptedState(this.getAdaptedState(updatedState));
-
-            this.triggerDependencies();
+            if (!this.isStateAsync) {
+                this.triggerDependencies();
+            }
         }
     }
 
@@ -117,15 +118,21 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     private integrateAsyncState(state: State<T>): State<T> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (state as any)
-            .then(this.setAsyncResource(asyncStatuses.ready))
-            .catch(this.setAsyncResource(asyncStatuses.error)) as State<T>;
+            .then(this.performCBAndPassNext(this.setAsyncResource(asyncStatuses.ready)))
+            .catch(this.performCBAndPassNext(this.setAsyncResource(asyncStatuses.error)))
+            .then(this.performCBAndPassNext(this.triggerDependencies.bind(this))) as State<T>;
     }
 
-    private setAsyncResource = (status: asyncStatuses) => (resource: Resource<T>): Resource<T> => {
+    private performCBAndPassNext = (cb: (resource: Resource<T>) => void) => (
+        resource: Resource<T>
+    ): Resource<T> => {
+        cb(resource);
+        return resource;
+    };
+
+    private setAsyncResource = (status: asyncStatuses) => (resource: Resource<T>): void => {
         this.resource = resource;
         this.status = status;
-
-        return resource;
     };
 }
 
