@@ -101,7 +101,6 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
 
     private setAdaptedState(adaptedState: State<T>): void {
         this.state = adaptedState;
-        this.resource = (adaptedState as unknown) as Resource<T>;
     }
 
     private getAdaptedState(updatedState: State<T>): State<T> {

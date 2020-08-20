@@ -1,6 +1,6 @@
 {
     "name": "linked-store",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "description": "tiny state-management library inspired by recoil",
     "scripts": {
         "format": "prettier src/**/*.ts --write",
