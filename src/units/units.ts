@@ -94,9 +94,7 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
     private updateState(updatedState: State<T>): void {
         if (updatedState !== this.state) {
             this.setAdaptedState(this.getAdaptedState(updatedState));
-            if (!this.isStateAsync) {
-                this.triggerDependencies();
-            }
+            this.triggerDependencies();
         }
     }
 
