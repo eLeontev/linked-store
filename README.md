@@ -72,6 +72,20 @@ userDetailsStore.getState().then((userDetailsAsResource) => {
 });
 ```
 
+##### Note: 
+`setState` for `derivedStore` will only trigger current `getter`. Passing any arguments will not affect the state.
+Call of `setState` will need only if store's `getter` contains side effects (e.g. fetch/localStorage, etc.)
+
+```javascript
+const sStore = simpleStore(3)
+const dStore = derivedStore((get) => 2 * get(sStore));
+store.setState();
+expect(store.getState()).toBe(6);
+
+store.setState(20);
+expect(store.getState()).toBe(6);
+```
+
 #### Utils
 
 -   getAsyncResource: `<T>(store: IDerivedStore<T>): GetStateCallback<Resource<T>>`
