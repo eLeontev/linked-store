@@ -11,4 +11,4 @@ jobs:
     - stage: validate
       script: npm run validate
     - stage: test:ci
-      script: npm run test
+      script: npm run test:CI

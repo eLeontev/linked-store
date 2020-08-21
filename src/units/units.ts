@@ -60,6 +60,7 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
         const state = this.getter(this.get);
         this.setAsyncFlag(state instanceof Promise);
 
+        this.setAsyncStatus();
         const adaptedState = this.getAdaptedState(state);
         this.defaultState = adaptedState;
         this.state = adaptedState;
@@ -94,6 +95,7 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
 
     private updateState(updatedState: State<T>): void {
         if (updatedState !== this.state) {
+            this.setAsyncStatus();
             this.setAdaptedState(this.getAdaptedState(updatedState));
             this.triggerDependencies();
         }
@@ -103,9 +105,11 @@ class DerivedStore<T> extends BaseStore<T> implements IDerivedStore<T> {
         this.state = adaptedState;
     }
 
-    private getAdaptedState(updatedState: State<T>): State<T> {
+    private setAsyncStatus() {
         this.status = this.isStateAsync ? asyncStatuses.pending : asyncStatuses.ready;
+    }
 
+    private getAdaptedState(updatedState: State<T>): State<T> {
         if (this.isStateAsync) {
             return this.integrateAsyncState(updatedState);
         }
