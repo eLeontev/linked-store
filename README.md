@@ -1,4 +1,4 @@
-# linked-store ![Status](https://travis-ci.org/eLeontev/linked-store.svg?branch=master)
+# linked-store ![Status](https://travis-ci.org/eLeontev/linked-store.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/eLeontev/linked-store/badge.svg?branch=master)](https://coveralls.io/github/eLeontev/linked-store?branch=master)
 
 ## Description
 
