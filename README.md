@@ -59,9 +59,9 @@ import { simpleStore, derivedStore } from 'linked-store';
 const userDetails = { name: 'userName' };
 const fetchUserDetails = () => new Promise((res) => setTimeout(() => res(userDetails)));
 
-const userIdState = simpleStore(321);
+const userIdStore = simpleStore(321);
 
-const userDetailsStore = derivedStore(async (get) => fetchUserDetails(get(userIdState)));
+const userDetailsStore = derivedStore(async (get) => fetchUserDetails(get(userIdStore)));
 
 expect(userDetailsStore.isAsync()).toBeTruthy();
 expect(userDetailsStore.getState() instanceof Promise).toBeTruthy();
@@ -106,11 +106,11 @@ try to return async state resource and throw error in each request till promise 
 import { simpleStore, derivedStore, getAsyncResource } from 'linked-store';
 
 const userDetails = { name: 'userName' };
-const fetchUserDetails = () => new Promise((res) => setTimeout(res(userDetails)));
+const fetchUserDetails = () => new Promise((res) => setTimeout(() => res(userDetails)));
 
-const userIdState = simpleStore(321);
+const userIdStore = simpleStore(321);
 
-const userDetailsStore = derivedStore(async (get) => fetchUserDetails(get(userIdState)));
+const userDetailsStore = derivedStore(async (get) => fetchUserDetails(get(userIdStore)));
 
 const getAsyncState = getAsyncResource(userDetailsStore);
 
@@ -124,7 +124,7 @@ try {
 }
 
 userDetailsStore.getState().then(() => {
-    expect(getAsyncState()).toBe(userIdState);
+    expect(getAsyncState()).toBe(userDetails);
 });
 ```
 
