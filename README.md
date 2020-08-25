@@ -57,7 +57,7 @@ expect(incrementX4Store.getState()).toBe(8);
 import { simpleStore, derivedStore } from 'linked-store';
 
 const userDetails = { name: 'userName' };
-const fetchUserDetails = () => new Promise((res) => setTimeout(res(userDetails)));
+const fetchUserDetails = () => new Promise((res) => setTimeout(() => res(userDetails)));
 
 const userIdState = simpleStore(321);
 
